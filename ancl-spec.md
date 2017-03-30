@@ -76,15 +76,15 @@ The ServiceList is an array of ServiceSpecs.
 ### ServiceSpec
 
     "name": ServiceName
-    "ports":
-      - [StartPort, EndPort, Protocol] || []
-      - [StartPort, EndPort, Protocol] || []
-      ...
+    ["ports":
+      - StartPort + ["-" + EndPort + ] "/" + Protocol
+      - StartPort + ["-" + EndPort + ] "/" + Protocol
+      ...]
 
 The ServiceSpec has two parts:
 
 * name: Used to identify the local reference (i.e. do not fully qualify) for this Service.
-* ports: An array of port information. It's either an array that defines a particular "tcp" or "udp" connection, or it is an empty array to indicate an abstract spec (see Connections)
+* ports: An array of port information. If present, it's an array of strings of traditional port specifications. If not present, it makes the Service abstract (see Connections).
   * StartPort: The numeric value of the start of the range of network ports which will/could be listened on.
   * EndPort: The numeric value of end of the range of network ports which will/could be listened on.
   * Protocol: "tcp" or "udp"
@@ -95,10 +95,13 @@ _Future work: describe other than L4 protocols or protocol requirements (e.g. TL
 
     - name: http
       ports:
-      - [80,80,"tcp"]
+      - "80/tcp"
     - name: https
       ports:
-      - [443,443,"tcp"]
+      - "443/tcp"
+    - name: rpc
+      ports:
+      - "49152-65535/udp"
 
 ### DependencyList
 
@@ -244,7 +247,7 @@ Connections are applied to the final assembly of different Models in an environm
 
 Connections work by providing a substitution of an Service or a Dependency with another one. This is reflected by two patterns:
 
-1. IngressConnection: The typical pattern is to substitute from an abstract Service description with one that is concrete. This replaces something that is incomplete, and applies to all instances of that Service in that Model.
+1. IngressConnection: The typical pattern is to substitute from an abstract Service description (e.g. lacking a port specification) with one that is concrete. This replaces something that is incomplete, and applies to all instances of that Service in that Model.
 1. EgressConnection: The less used case is one where only a specific Dependency needs a substitution.
 
 EgressConnections take precendent over IngressConnections. If both exist for a particular relationship, use the EgressConnection.
