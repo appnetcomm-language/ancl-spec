@@ -140,7 +140,7 @@ Some examples of Models:
       - ComponentSpec
       ...
 
-The ModelSpec is a key/value hash of Components with the key being the ComponentName and the value being the inside of the ComponentSpec.
+The ModelSpec has a name and a list of ComponentSpecs.
 
 _Future Work: Specify version number in the Model._
 
@@ -206,7 +206,7 @@ The GroupRoleName has the same form as a standard RoleName, but the ModelName in
 
 **Example**
 
-    - name: prod::webapihosts
+    - name: prod::grouprole::webapihosts
       roles: [prod::web-api-service::web-server, prod::web-api-service::db]
 
 ## Node
@@ -384,4 +384,5 @@ A Node is invalid if:
 A Role is invalid if:
 
 * It does not reference a valid Model
+* It references any Model which has an abstract ServiceSpec that has not been substituted with a Connection
 * Context declaration is required and it does not reference a valid Context
